@@ -6,7 +6,7 @@ import * as FontText from "./fontText";
 const NumberContainer = (props) => {
   return (
     <View style={styles.container}>
-      <FontText.Title>{props.children}</FontText.Title>
+      <FontText.Body>{props.children}</FontText.Body>
     </View>
   );
 };
