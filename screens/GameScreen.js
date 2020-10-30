@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Alert, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  FlatList
+} from "react-native";
 
 import NumberContainer from "../components/NumberContainer";
 import Card from "../components/Card";
@@ -27,11 +34,10 @@ const GameScreen = ({ userChoice, onGameOver }) => {
   useEffect(() => {
     if (currentGuess === userChoice) {
       if (currentGuess === userChoice) {
-        onGameOver(rounds);
+        onGameOver(passGuesses.length);
       }
     }
   }, [currentGuess, userChoice, onGameOver]);
-
 
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
@@ -49,7 +55,7 @@ const GameScreen = ({ userChoice, onGameOver }) => {
     if (direction === "lower") {
       currentHigh.current = currentGuess;
     } else {
-      currentLow.current = currentGuess;
+      currentLow.current = currentGuess + 1;
     }
     const nextNumber = generateRandomBetween(
       currentLow.current,
@@ -58,6 +64,18 @@ const GameScreen = ({ userChoice, onGameOver }) => {
     );
     setCurrentGuess(nextNumber);
     setPassGuesses(currentGuess => [nextNumber, ...currentGuess]);
+  };
+
+  const renderListItem = (listLength, itemData) => {
+    console.log("listLength", listLength);
+    console.log("itemData", itemData);
+    const i = listLength - itemData.index;
+    return (
+      <View key={1} style={styles.listItem}>
+        <FontText.Body>#{i}</FontText.Body>
+        <FontText.Body>{itemData.item}</FontText.Body>
+      </View>
+    );
   };
 
   return (
@@ -72,9 +90,17 @@ const GameScreen = ({ userChoice, onGameOver }) => {
           <Ionicons name="md-add" size={24} color="white" />
         </MainButton>
       </Card>
-      <ScrollView>
-        {passGuesses.map((g, i) => <View key={i}><Text>{g}</Text></View>)}
-      </ScrollView>
+      <View style={styles.listContainer}>
+        {/*<ScrollView contentContainerStyle={styles.list}>*/}
+        {/*  {passGuesses.map((g, i) => renderListItem(g, passGuesses.length - i))}*/}
+        {/*</ScrollView>*/}
+        <FlatList
+          contentContainerStyle={styles.list}
+          keyExtractor={item => item.toString()}
+          data={passGuesses}
+          renderItem={item => renderListItem(passGuesses.length, item)}
+        />
+      </View>
     </View>
   );
 };
@@ -91,6 +117,25 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 400,
     maxWidth: "90%"
+  },
+  listContainer: {
+    width: "60%",
+    flex: 1
+  },
+  list: {
+    flexGrow: 1,
+    justifyContent: "flex-end",
+    // alignItems: "center"
+  },
+  listItem: {
+    borderColor: "#ccc",
+    padding: 15,
+    marginVertical: 10,
+    borderWidth: 1,
+    backgroundColor: "white",
+    flexDirection: "row",
+    width: '100%',
+    justifyContent: "space-between"
   }
 });
 
