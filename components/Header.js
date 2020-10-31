@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import COLORS from "../constants/colors";
 import * as FontText from "./fontText";
 
-const Header = (props) => {
+const Header = props => {
   return (
     <View style={styles.header}>
       <FontText.Title>{props.title}</FontText.Title>
@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     paddingTop: 36,
     backgroundColor: COLORS.primary,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"
+  }
 });
 
 export default Header;
