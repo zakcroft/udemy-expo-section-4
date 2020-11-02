@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import {
   View,
@@ -19,9 +19,24 @@ import COLORS from "../constants/colors";
 import * as FontText from "../components/fontText";
 
 const StartGameScreen = props => {
+  const btnWidthFactor = 4;
   const [enteredValue, setEnteredValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState("");
+  const [buttonWidth, setButtonWidth] = useState(
+    Dimensions.get("window").width / btnWidthFactor
+  );
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setButtonWidth(Dimensions.get("window").width / btnWidthFactor);
+    };
+    Dimensions.addEventListener("change", updateLayout);
+
+    return () => {
+      Dimensions.removeEventListener("change", updateLayout);
+    };
+  });
 
   const numberedInputHandler = inputText => {
     setEnteredValue(inputText.replace(/[^0-9]/g, ""));
@@ -72,7 +87,7 @@ const StartGameScreen = props => {
 
   return (
     <ScrollView>
-      <KeyboardAvoidingView behavior={"position"} keyboardVerticalOffset={30}>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={30}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View style={styles.screen}>
             <FontText.Title>Start a new Game</FontText.Title>
@@ -89,7 +104,7 @@ const StartGameScreen = props => {
                 value={enteredValue}
               />
               <View style={styles.buttonContainer}>
-                <View style={styles.button}>
+                <View style={{ width: buttonWidth }}>
                   <Button
                     title="Reset"
                     onPress={resetInputHandler}
@@ -130,10 +145,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15
   },
-  button: {
-    // width: 100
-    width: Dimensions.get("window").width / 4
-  },
+  // button: {
+  //   // width: 100
+  //   width: Dimensions.get("window").width / 4
+  // },
   inputContainer: {
     width: "80%",
     maxWidth: "95%",

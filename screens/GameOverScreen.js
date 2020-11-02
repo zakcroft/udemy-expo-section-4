@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,16 +13,58 @@ import img from "../assets/success.png";
 import Colors from "../constants/colors";
 
 const GameOverScreen = props => {
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState(
+    Dimensions.get("window").width
+  );
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(
+    Dimensions.get("window").height
+  );
+  useEffect(() => {
+    const updateLayout = () => {
+      setAvailableDeviceWidth(Dimensions.get("window").width);
+      setAvailableDeviceHeight(Dimensions.get("window").height);
+    };
+
+    Dimensions.addEventListener("change", updateLayout);
+
+    return () => {
+      Dimensions.removeEventListener("change", updateLayout);
+    };
+  });
   return (
     <ScrollView>
       <View style={styles.screen}>
         <FontText.Title>The Game is Over!</FontText.Title>
-        <View style={styles.imgContainer}>
+        <View
+          style={{
+            ...styles.imgContainer,
+            ...{
+              width: availableDeviceWidth * 0.7,
+              height: availableDeviceWidth * 0.7,
+              borderRadius: (availableDeviceWidth * 0.7) / 2,
+              marginVertical: availableDeviceHeight / 30
+            }
+          }}
+        >
           {/*<Image style={styles.img} source={{uri:"https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png"}} resizeMode={"cover"} fadeDuration={1000}/>*/}
           <Image style={styles.img} source={img} resizeMode={"cover"} />
         </View>
-        <View style={styles.resultsContainer}>
-          <FontText.Body style={styles.resultsText}>
+        <View
+          style={{
+            ...styles.resultsContainer,
+            ...{
+              marginVertical: availableDeviceHeight / 60
+            }
+          }}
+        >
+          <FontText.Body
+            style={{
+              ...styles.resultsText,
+              ...{
+                fontSize: availableDeviceHeight < 400 ? 16 : 20
+              }
+            }}
+          >
             Your phone needed{" "}
             <Text style={styles.highlight}>{props.roundsNumber}</Text> rounds to
             guess the number
@@ -39,28 +81,23 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    paddingVertical: 10
   },
   img: {
     width: "100%",
     height: "100%"
   },
   imgContainer: {
-    borderRadius: (Dimensions.get("window").width * 0.7) / 2,
     borderWidth: 3,
     borderColor: "black",
-    width: Dimensions.get("window").width * 0.7,
-    height: Dimensions.get("window").width * 0.7,
-    overflow: "hidden",
-    marginVertical: Dimensions.get("window").height / 40
+    overflow: "hidden"
   },
   resultsContainer: {
-    marginHorizontal: 30,
-    marginVertical: Dimensions.get("window").height / 60
+    marginHorizontal: 30
   },
   resultsText: {
-    textAlign: "center",
-    fontSize: Dimensions.get("window").height < 400 ? 16 : 20
+    textAlign: "center"
   },
   highlight: {
     color: Colors.primary,
